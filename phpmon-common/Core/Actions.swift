@@ -36,18 +36,40 @@ class Actions {
     
     public static func fixHomebrewPermissions()
     {
-        // Experiment #1: Attempt to find out if we can be root
-        let bashScript = """
-        whoami
-        """
+        var servicesCommands = [
+            "\(Paths.brew) services stop nginx",
+            "\(Paths.brew) services stop dnsmasq",
+        ]
+        var cellarCommands = [
+            "chown -R \(Paths.whoami):staff \(Paths.cellarPath)/nginx",
+            "chown -R \(Paths.whoami):staff \(Paths.cellarPath)/dnsmasq"
+        ]
         
-        var appleScript = NSAppleScript(
-            source: "do shell script \"\(bashScript)\" with administrator privileges"
+        PhpEnv.shared.availablePhpVersions.forEach { version in
+            let formula = version == PhpEnv.brewPhpVersion
+                ? "php"
+                : "php@\(version)"
+            servicesCommands.append("\(Paths.brew) services stop \(formula)")
+            cellarCommands.append("chown -R \(Paths.whoami):staff \(Paths.cellarPath)/\(formula)")
+        }
+        
+        let script =
+            servicesCommands.joined(separator: " && ")
+            + " && "
+            + cellarCommands.joined(separator: " && ")
+        
+        let appleScript = NSAppleScript(
+            source: "do shell script \"\(script)\" with administrator privileges"
         )
         
-        var eventResult = appleScript!.executeAndReturnError(nil)
+        let eventResult: NSAppleEventDescriptor? = appleScript?.executeAndReturnError(nil)
         
-        print(eventResult.stringValue)
+        if (eventResult == nil) {
+            print("Oh no, that didn't work.")
+        } else {
+            NotificationCenter.default.post(name: Events.ServicesUpdated, object: nil)
+            print("Oh, that worked.")
+        }
     }
     
     // MARK: - Finding Config Files

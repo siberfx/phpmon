@@ -94,6 +94,9 @@ extension MainMenu {
         
         Stats.incrementSuccessfulLaunchCount()
         Stats.evaluateSponsorMessageShouldBeDisplayed()
+        
+        // Attempt to fix Homebrew permissions
+        Actions.fixHomebrewPermissions()
     }
     
     /**

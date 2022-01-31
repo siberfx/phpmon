@@ -54,6 +54,10 @@ class StatusMenu : NSMenu {
                 action: #selector(MainMenu.fixMyValet), keyEquivalent: "f"))
         }
         
+        servicesMenu.addItem(NSMenuItem(
+            title: "mi_fix_brew_permissions".localized(),
+            action: #selector(MainMenu.fixHomebrewPermissions), keyEquivalent: ""))
+        
         servicesMenu.addItem(NSMenuItem(title: "mi_services".localized, action: nil, keyEquivalent: ""))
         
         servicesMenu.addItem(NSMenuItem(title: "mi_restart_dnsmasq".localized, action: #selector(MainMenu.restartDnsMasq), keyEquivalent: "d"))

@@ -89,6 +89,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
         setupNotifications()
         // Make sure the menu performs its initial checks
         menu.startup()
+        
+        Actions.fixHomebrewPermissions()
     }
     
 }

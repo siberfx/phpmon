@@ -34,17 +34,20 @@ class Actions {
         brew("services stop dnsmasq", sudo: true)
     }
     
-    /**
-     Kindly asks Valet to switch to a specific PHP version.
-     */
-    public static func switchToPhpVersionUsingValet(
-        version: String,
-        availableVersions: [String],
-        completed: @escaping () -> Void
-    ) {
-        Log.info("Switching to \(version) using Valet")
-        Log.info(valet("use php@\(version)"))
-        completed()
+    public static func fixHomebrewPermissions()
+    {
+        // Experiment #1: Attempt to find out if we can be root
+        let bashScript = """
+        whoami
+        """
+        
+        var appleScript = NSAppleScript(
+            source: "do shell script \"\(bashScript)\" with administrator privileges"
+        )
+        
+        var eventResult = appleScript!.executeAndReturnError(nil)
+        
+        print(eventResult.stringValue)
     }
     
     // MARK: - Finding Config Files
